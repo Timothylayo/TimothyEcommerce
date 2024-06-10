@@ -1,0 +1,93 @@
+﻿
+<div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        @for (int i = 0; i < FeaturedProductList.Count; i++)
+        {
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")" aria-label="Slide @(i + 1)"></button>
+        }
+    </div>
+    <div class="carousel-inner">
+        @if (FeaturedProductList!.Any())
+        {
+            @foreach (var product in FeaturedProductList!.OrderByDescending(_ => _.DateUploaded).Take(5).Select((item, index) => new { item, index }))
+            {
+                <div class="carousel-item @(product.index == 0 ? "active" : "")">
+                    <figure class="img-container">
+                        <img src="@product.item.Base64Img" width="auto" height="380" class="float-end" />
+                    </figure>
+                    <div class="d-flex justify-content-center">
+                        <div class="position-absolute bottom-50px">
+                            <div class="vstack gap-3 mb-3">
+                                <div>
+                                    <p>
+                                        <span style="font-family: impact; text-indent: 2px;" class="text-dark fw-bold display-2">
+                                            @product.item.Name
+                                            <sup style="font-family: 'Courier New'">
+                                                <span class="badge rounded-pill bg-primary fs-6">@GetNewLabel(product.item.DateUploaded)</span>
+                                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-family: sans-serif">
+                                                    @(product.item.Quantity - 1 > 0 ? $"{product.item.Quantity - 1}+" : product.item.Quantity)
+                                                    <span class="visually-hidden">unread messages</span>
+                                                </span>
+                                            </sup>
+                                        </span>
+                                    </p>
+                                </div>
+                                <p class="text-muted fs-5 w-75" style="text-align: justify-all; font-family: Cambria">@GetDescription(product.item.Description!)</p>
+                            </div>
+                            <div class="hstack gap-1 d-flex justify-content-center">
+                                <button class="btn btn-secondary fw-bold" id="styleButton"><i class="fa fa-list"></i> Details</button>
+                                <button class="btn btn-outline-danger fw-bold" id="styleButton"><i class="fa fa-cart-plus"></i> BUY NOW</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-info">No Products Available.</div>
+        }
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+@code{
+    List<Product>? FeaturedProductList = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RetrievedFeaturedProducts();
+    }
+
+    private async Task RetrievedFeaturedProducts()
+    {
+        FeaturedProductList?.Clear();
+        bool featured = true;
+        var results = await ClientService.GetAllProducts(featured);
+        if (results is null) return;
+        foreach (var i in results)
+            FeaturedProductList!.Add(i);
+    }
+
+    string GetNewLabel(DateTime dateUploaded)
+    {
+        int maxDays = 30;
+        int productDateAfterUploaded = (DateTime.Now - dateUploaded).Days;
+        return productDateAfterUploaded <= maxDays ? "New" : null!;
+    }
+
+    string GetDescription(string description)
+    {
+        string appendDots = "...";
+        int maxLength = 100;
+        int descriptionLength = description.Length;
+        return descriptionLength > maxLength ? $"{description.Substring(0, 100)}{appendDots}" : description;
+    }
+}
