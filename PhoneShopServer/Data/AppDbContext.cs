@@ -3,13 +3,10 @@ using PhoneShopSharedLib.Models;
 
 namespace PhoneShopServer.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-
-        }
         //use prop to create the property
         public DbSet<Product> Products { get; set; } = default!;
+        public DbSet<Category>Categories  { get; set; } = default!;
     }
 }

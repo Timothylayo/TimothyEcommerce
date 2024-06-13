@@ -9,8 +9,14 @@
 @using PhoneShopClient
 @using PhoneShopClient.Layout
 
-@using PhoneShopSharedLib.Conracts
+
+@using PhoneShopClient.Services
 @using PhoneShopSharedLib.Models
+@using PhoneShopClient.Pages.ProductPages
+@using PhoneShopClient.Pages.OtherPages
+
 
 @inject IJSRuntime js;
-@inject Iproduct ClientService
+@inject IProductService ProductService
+@inject ICategoryService CategoryService
+@inject MessageDialogService messageDialogService

@@ -1,5 +1,5 @@
 ﻿@page "/add-product"
-@using PhoneShopClient.Services
+
 
 <div class="container">
     <div class="row">
@@ -63,7 +63,7 @@
             return;
        }
 
-       var (flag, message) = await ClientService.AddProduct(MyProduct);
+       var (flag, message) = await ProductService.AddProduct(MyProduct);
        if (flag)
            messageDialog!.SetDialogValues("success", message);
        else

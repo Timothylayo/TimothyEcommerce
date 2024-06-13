@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using PhoneShopClient.Pages;
 using PhoneShopClient.Services;
-using PhoneShopSharedLib.Conracts;
 
 namespace PhoneShopClient
 {
@@ -14,7 +14,9 @@ namespace PhoneShopClient
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddScoped<Iproduct,ClientServices>();
+            builder.Services.AddScoped<IProductService, ClientServices>();
+            builder.Services.AddScoped<ICategoryService, ClientServices>();
+            builder.Services.AddScoped<MessageDialogService>();
             await builder.Build().RunAsync();
         }
     }

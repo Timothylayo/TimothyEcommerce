@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using PhoneShopServer.Data;
 using PhoneShopServer.Repositories;
-using PhoneShopSharedLib.Conracts;
 
 namespace PhoneShopServer
 {
@@ -24,7 +23,8 @@ namespace PhoneShopServer
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string not found"));
             });
-            builder.Services.AddScoped<Iproduct,ProductRepository>();
+            builder.Services.AddScoped<IProduct, ProductRepository>();
+            builder.Services.AddScoped<ICategory, CategoryRepository>();
 
             var app = builder.Build();
 
@@ -37,7 +37,7 @@ namespace PhoneShopServer
             }
 
             app.UseHttpsRedirection();
-            app.UseBlazorFrameworkFiles(); 
+            app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
 
             app.UseAuthorization();
